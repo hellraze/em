@@ -1,0 +1,8 @@
+POST localhost:8080/person
+Content-Type: application/json
+
+{
+  "name": "Aidar",
+  "surname": "Yarullin",
+  "patronymic": "Lenarovich"
+}
