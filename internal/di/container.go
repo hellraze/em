@@ -73,10 +73,9 @@ func (c *Container) HTTPRouter() http.Handler {
 func CreateConnection(ctx context.Context) (*pgxpool.Pool, error) {
 	err := godotenv.Load(".env")
 	if err != nil {
-		fmt.Printf("error: %w", err)
 		fmt.Println(".env file not found")
 	}
-	dns := os.Getenv("DATABASE_URL")
+	dns := os.Getenv("DATABASE")
 	pool, err := pgxpool.New(ctx, dns)
 	if err != nil {
 		return nil, err

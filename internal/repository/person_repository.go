@@ -27,6 +27,6 @@ func (personRepository *PersonRepository) Save(ctx context.Context, person domai
 		"gender":      person.Gender(),
 		"nationality": person.Nationality(),
 	}
-	_, err := personRepository.Pool.Exec(ctx, "INSERT INTO EM.person(person_id, name, surname, patronmic, age, gender, nationality) VALUES(@id, @name, @surname, @patronymic, @age, @gender, @nationality)", args)
+	_, err := personRepository.Pool.Exec(ctx, "INSERT INTO EM.person(person_id, name, surname, patronymic, age, gender, nationality) VALUES(@id, @name, @surname, @patronymic, @age, @gender, @nationality)", args)
 	return err
 }
