@@ -33,10 +33,8 @@ func EnrichDataWithNationality(name string) (string, error) {
 		return "", nil
 	}
 
-	// Создаем экземпляр NationalizeResponse для распаковки JSON
 	var nationalizeResponse NationalizeResponse
 
-	// Распаковываем JSON в структуру
 	err = json.Unmarshal(body, &nationalizeResponse)
 	if err != nil {
 		fmt.Println("Ошибка при распаковке JSON:", err)

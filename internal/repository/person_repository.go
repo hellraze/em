@@ -9,12 +9,12 @@ import (
 )
 
 type PersonRepository struct {
-	Pool *pgxpool.Pool
+	pool *pgxpool.Pool
 }
 
 func NewPersonRepository(pool *pgxpool.Pool) *PersonRepository {
 	return &PersonRepository{
-		Pool: pool,
+		pool: pool,
 	}
 }
 
@@ -28,12 +28,12 @@ func (personRepository *PersonRepository) Save(ctx context.Context, person domai
 		"gender":      person.Gender(),
 		"nationality": person.Nationality(),
 	}
-	_, err := personRepository.Pool.Exec(ctx, "INSERT INTO EM.person(person_id, name, surname, patronymic, age, gender, nationality) VALUES(@id, @name, @surname, @patronymic, @age, @gender, @nationality)", args)
+	_, err := personRepository.pool.Exec(ctx, "INSERT INTO EM.person(person_id, name, surname, patronymic, age, gender, nationality) VALUES(@id, @name, @surname, @patronymic, @age, @gender, @nationality)", args)
 	return err
 }
 
 func (personRepository *PersonRepository) Delete(ctx context.Context, id uuid.UUID) error {
-	_, err := personRepository.Pool.Exec(ctx, "DELETE FROM EM.person WHERE person_id=$1", id)
+	_, err := personRepository.pool.Exec(ctx, "DELETE FROM EM.person WHERE person_id=$1", id) //логи
 	if err != nil {
 		return err
 	}

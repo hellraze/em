@@ -33,6 +33,7 @@ func (handler *POSTPersonHandler) ServeHTTP(writer http.ResponseWriter, request 
 	err := json.NewDecoder(request.Body).Decode(&body)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusBadRequest)
+		return
 	}
 	command := &usecase.CreatePersonCommand{
 		Name:       body.Name,
@@ -43,6 +44,7 @@ func (handler *POSTPersonHandler) ServeHTTP(writer http.ResponseWriter, request 
 	person, err := handler.useCase.CreateUserHandler(ctx, command)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
 	}
 	response := &POSTPersonResponse{
 		ID: person.ID(),
@@ -50,5 +52,6 @@ func (handler *POSTPersonHandler) ServeHTTP(writer http.ResponseWriter, request 
 	err = json.NewEncoder(writer).Encode(response)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
 	}
 }

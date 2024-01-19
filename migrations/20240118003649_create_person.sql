@@ -3,13 +3,12 @@
 CREATE SCHEMA em;
 CREATE TABLE em.person(
     person_id uuid PRIMARY KEY,
-    name VARCHAR,
-    surname VARCHAR,
+    name VARCHAR NOT NULL,
+    surname VARCHAR NOT NULL,
     patronymic VARCHAR,
-    age INT,
-    gender VARCHAR,
-    nationality VARCHAR
-
+    age INT NOT NULL,
+    gender VARCHAR NOT NULL,
+    nationality VARCHAR NOT NULL
 );
 -- +goose StatementEnd
 

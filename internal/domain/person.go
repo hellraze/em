@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"EM/internal/usecase/enrich_data"
 	"context"
 	"github.com/gofrs/uuid"
 )
@@ -24,23 +23,7 @@ func (p *Person) Age() int            { return p.age }
 func (p *Person) Gender() string      { return p.gender }
 func (p *Person) Nationality() string { return p.nationality }
 
-func NewPerson(name string, surname string, patronymic string) (*Person, error) {
-	id := uuid.Must(uuid.NewV7())
-	age, err := enrich_data.EnrichDataWithAge(name)
-	if err != nil {
-		return nil, err
-	}
-
-	gender, err := enrich_data.EnrichDataWithGender(name)
-	if err != nil {
-		return nil, err
-	}
-
-	nationality, err := enrich_data.EnrichDataWithNationality(name)
-	if err != nil {
-		return nil, err
-	}
-
+func NewPerson(id uuid.UUID, name string, surname string, patronymic string, age int, gender string, nationality string) (*Person, error) {
 	return &Person{
 		id:          id,
 		name:        name,

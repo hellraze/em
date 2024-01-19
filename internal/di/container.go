@@ -81,8 +81,8 @@ func (c *Container) HTTPRouter() http.Handler {
 	router := mux.NewRouter()
 	router.Use(middleware.Recover)
 
-	router.Handle("/person", c.POSTPersonHandler()).Methods(http.MethodPost)
-	router.Handle("/person", c.DeletePersonHandler()).Methods(http.MethodDelete)
+	router.Handle("api/people", c.POSTPersonHandler()).Methods(http.MethodPost)
+	router.Handle("api/people", c.DeletePersonHandler()).Methods(http.MethodDelete)
 	c.router = router
 	return c.router
 
