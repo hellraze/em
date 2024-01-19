@@ -54,4 +54,5 @@ func NewPerson(name string, surname string, patronymic string) (*Person, error) 
 
 type PersonRepository interface {
 	Save(context.Context, Person) error
+	Delete(context.Context, uuid.UUID) error
 }

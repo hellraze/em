@@ -3,6 +3,7 @@ package repository
 import (
 	"EM/internal/domain"
 	"context"
+	"github.com/gofrs/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -29,4 +30,12 @@ func (personRepository *PersonRepository) Save(ctx context.Context, person domai
 	}
 	_, err := personRepository.Pool.Exec(ctx, "INSERT INTO EM.person(person_id, name, surname, patronymic, age, gender, nationality) VALUES(@id, @name, @surname, @patronymic, @age, @gender, @nationality)", args)
 	return err
+}
+
+func (personRepository *PersonRepository) Delete(ctx context.Context, id uuid.UUID) error {
+	_, err := personRepository.Pool.Exec(ctx, "DELETE FROM EM.person WHERE person_id=$1", id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
