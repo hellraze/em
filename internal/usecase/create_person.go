@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"EM/internal/domain"
-	enrich_data2 "EM/internal/services/enrich_data"
+	"EM/internal/services/enrich_data"
 	"context"
 	"github.com/gofrs/uuid"
 )
@@ -25,17 +25,17 @@ type CreatePersonCommand struct {
 
 func (useCase *CreatePersonUseCase) CreateUserHandler(ctx context.Context, command *CreatePersonCommand) (*domain.Person, error) {
 	id := uuid.Must(uuid.NewV7())
-	age, err := enrich_data2.EnrichDataWithAge(command.Name) //перенести в юзкейс
+	age, err := enrich_data.EnrichDataWithAge(command.Name) //перенести в юзкейс
 	if err != nil {
 		return nil, err
 	}
 
-	gender, err := enrich_data2.EnrichDataWithGender(command.Name)
+	gender, err := enrich_data.EnrichDataWithGender(command.Name)
 	if err != nil {
 		return nil, err
 	}
 
-	nationality, err := enrich_data2.EnrichDataWithNationality(command.Name)
+	nationality, err := enrich_data.EnrichDataWithNationality(command.Name)
 	if err != nil {
 		return nil, err
 	}

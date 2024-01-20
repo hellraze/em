@@ -27,6 +27,9 @@ type Container struct {
 
 	deletePerson        *usecase.DeletePersonUseCase
 	deletePersonHandler *handlers.DeletePersonHandler
+
+	putPerson        *usecase.PutPersonUseCase
+	putPersonHandler *handlers.PutPersonHandler
 }
 
 func NewContainer(ctx context.Context) *Container {
@@ -67,6 +70,20 @@ func (c *Container) DeletePersonHandler() *handlers.DeletePersonHandler {
 	return c.deletePersonHandler
 }
 
+func (c *Container) PutPerson() *usecase.PutPersonUseCase {
+	if c.putPerson == nil {
+		c.putPerson = usecase.NewPutPersonUseCase(c.PersonRepository())
+	}
+	return c.putPerson
+}
+
+func (c *Container) PutPersonHandler() *handlers.PutPersonHandler {
+	if c.putPersonHandler == nil {
+		c.putPersonHandler = handlers.NewPutPersonHandler(c.PutPerson())
+	}
+	return c.putPersonHandler
+}
+
 func (c *Container) PersonRepository() domain.PersonRepository {
 	if c.personRepository == nil {
 		c.personRepository = repository.NewPersonRepository(c.pool)
@@ -81,8 +98,9 @@ func (c *Container) HTTPRouter() http.Handler {
 	router := mux.NewRouter()
 	router.Use(middleware.Recover)
 
-	router.Handle("api/people", c.POSTPersonHandler()).Methods(http.MethodPost)
-	router.Handle("api/people", c.DeletePersonHandler()).Methods(http.MethodDelete)
+	router.Handle("/api/people", c.POSTPersonHandler()).Methods(http.MethodPost)
+	router.Handle("/api/people", c.DeletePersonHandler()).Methods(http.MethodDelete)
+	router.Handle("/api/people", c.PutPersonHandler()).Methods(http.MethodPut)
 	c.router = router
 	return c.router
 

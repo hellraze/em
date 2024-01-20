@@ -25,7 +25,6 @@ func NewDeletePersonHandler(useCase *usecase.DeletePersonUseCase) *DeletePersonH
 	}
 }
 func (handler *DeletePersonHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-
 	id, err := uuid.FromString(request.URL.Query().Get("id"))
 	if err != nil {
 		http.Error(writer, "ID parameter is required", http.StatusBadRequest)

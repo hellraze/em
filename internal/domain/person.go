@@ -23,6 +23,14 @@ func (p *Person) Age() int            { return p.age }
 func (p *Person) Gender() string      { return p.gender }
 func (p *Person) Nationality() string { return p.nationality }
 
+func (p *Person) SetID(id uuid.UUID)                { p.id = id }
+func (p *Person) SetName(name string)               { p.name = name }
+func (p *Person) SetSurname(surname string)         { p.surname = surname }
+func (p *Person) SetPatronymic(patronymic string)   { p.patronymic = patronymic }
+func (p *Person) SetAge(age int)                    { p.age = age }
+func (p *Person) SetGender(gender string)           { p.gender = gender }
+func (p *Person) SetNationality(nationality string) { p.nationality = nationality }
+
 func NewPerson(id uuid.UUID, name string, surname string, patronymic string, age int, gender string, nationality string) (*Person, error) {
 	return &Person{
 		id:          id,
@@ -38,4 +46,5 @@ func NewPerson(id uuid.UUID, name string, surname string, patronymic string, age
 type PersonRepository interface {
 	Save(context.Context, Person) error
 	Delete(context.Context, uuid.UUID) error
+	FindByID(context.Context, uuid.UUID) (*Person, error)
 }

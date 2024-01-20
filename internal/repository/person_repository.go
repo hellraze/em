@@ -39,3 +39,63 @@ func (personRepository *PersonRepository) Delete(ctx context.Context, id uuid.UU
 	}
 	return nil
 }
+
+func (personRepository *PersonRepository) FindByID(ctx context.Context, id uuid.UUID) (*domain.Person, error) {
+	var (
+		name        string
+		surname     string
+		patronymic  string
+		age         int
+		gender      string
+		nationality string
+	)
+	err := personRepository.pool.QueryRow(ctx, "SELECT * FROM EM.person WHERE person_id=($1)", id).Scan(&id, &name, &surname, &patronymic, &age, &gender, &nationality)
+	if err != nil {
+		return nil, err
+	}
+	person, err := domain.NewPerson(id, name, surname, patronymic, age, gender, nationality)
+	return person, nil
+}
+
+func (personRepository *PersonRepository) UpdatePerson(ctx context.Context, person domain.Person) error {
+	args := pgx.NamedArgs{
+		"id":          person.ID(),
+		"name":        person.Name(),
+		"surname":     person.Surname(),
+		"patronymic":  person.Patronymic(),
+		"age":         person.Age(),
+		"gender":      person.Gender(),
+		"nationality": person.Nationality(),
+	}
+	_, err := personRepository.pool.Exec(ctx, "UPDATE EM.person SET name = @name, surname = @surname, patronymic = @patronymic, age = @age, gender = @gender, nationality = @nationality  WHERE person_id=@id  VALUES(@id, @name, @surname, @patronymic, @age, @gender, @nationality)", args)
+	if err != nil {
+		return err
+	}
+	return err
+}
+
+func (personRepository *PersonRepository) Update(ctx context.Context, id uuid.UUID, name string, surname string, patronymic string, age int, gender string, nationality string) (uuid.UUID, error) {
+	person, err := personRepository.FindByID(ctx, id)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	switch {
+	case name != "":
+		person.SetName(name)
+	case surname != "":
+		person.SetSurname(surname)
+	case patronymic != "":
+		person.SetPatronymic(patronymic)
+	case age != 0:
+		person.SetAge(age)
+	case gender != "":
+		person.SetGender(gender)
+	case nationality != "":
+		person.SetNationality(nationality)
+	}
+	err = personRepository.UpdatePerson(ctx, *person)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	return person.ID(), nil
+}
