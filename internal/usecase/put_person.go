@@ -3,6 +3,7 @@ package usecase
 import (
 	"EM/internal/domain"
 	"context"
+	"fmt"
 	"github.com/gofrs/uuid"
 )
 
@@ -28,6 +29,7 @@ type PutPersonCommand struct {
 
 func (useCase *PutPersonUseCase) PutUserHandler(ctx context.Context, command *PutPersonCommand) (*domain.Person, error) {
 	person, err := domain.NewPerson(command.ID, command.Name, command.Surname, command.Patronymic, command.Age, command.Gender, command.Nationality)
-	err = useCase.personRepository.Save(ctx, *person)
+	id, err := useCase.personRepository.Update(ctx, command.ID, command.Name, command.Surname, command.Patronymic, command.Age, command.Gender, command.Nationality)
+	fmt.Println(id)
 	return person, err
 }

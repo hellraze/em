@@ -47,4 +47,6 @@ type PersonRepository interface {
 	Save(context.Context, Person) error
 	Delete(context.Context, uuid.UUID) error
 	FindByID(context.Context, uuid.UUID) (*Person, error)
+	UpdatePerson(ctx context.Context, person Person) error
+	Update(context.Context, uuid.UUID, string, string, string, int, string, string) (uuid.UUID, error)
 }
