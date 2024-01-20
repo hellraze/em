@@ -8,7 +8,7 @@ Content-Type: application/json
 }
 
 ###
-DELETE localhost:8080/api/people?id=018d2687-0a96-79d2-960b-4c5d1345685c
+DELETE localhost:8080/api/people?id=018d286b-dd12-7ba1-aec2-558f25102acf
 
 ###
 
@@ -18,5 +18,16 @@ Content-Type: application/json
 {
   "name": "Aidar",
   "surname": "Yarullin",
-  "patronymic": "Lenarovich"
+  "patronymic": "Lenarovich",
+  "age": 29
+}
+
+###
+POST localhost:8080/api/people
+Content-Type: application/json
+
+{
+  "name": "Islam",
+  "surname": "Askerov",
+  "patronymic": "Vladimirovich"
 }

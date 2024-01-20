@@ -25,7 +25,7 @@ type CreatePersonCommand struct {
 
 func (useCase *CreatePersonUseCase) CreateUserHandler(ctx context.Context, command *CreatePersonCommand) (*domain.Person, error) {
 	id := uuid.Must(uuid.NewV7())
-	age, err := enrich_data.EnrichDataWithAge(command.Name) //перенести в юзкейс
+	age, err := enrich_data.EnrichDataWithAge(command.Name)
 	if err != nil {
 		return nil, err
 	}

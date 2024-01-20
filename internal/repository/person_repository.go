@@ -62,18 +62,22 @@ func (personRepository *PersonRepository) Update(ctx context.Context, id uuid.UU
 	if err != nil {
 		return err
 	}
-	switch {
-	case name != "":
+	if name != "" {
 		person.SetName(name)
-	case surname != "":
+	}
+	if surname != "" {
 		person.SetSurname(surname)
-	case patronymic != "":
+	}
+	if patronymic != "" {
 		person.SetPatronymic(patronymic)
-	case age != 0:
+	}
+	if age != 0 {
 		person.SetAge(age)
-	case gender != "":
+	}
+	if gender != "" {
 		person.SetGender(gender)
-	case nationality != "":
+	}
+	if nationality != "" {
 		person.SetNationality(nationality)
 	}
 	args := pgx.NamedArgs{
