@@ -16,7 +16,7 @@ PUT localhost:8080/api/people?id=018d1e1c-8cbb-70f6-b01e-699687167962
 Content-Type: application/json
 
 {
-  "name": "Ildar",
+  "name": "Aidar",
   "surname": "Yarullin",
   "patronymic": "Lenarovich"
 }

@@ -57,37 +57,6 @@ func (personRepository *PersonRepository) FindByID(ctx context.Context, id uuid.
 	return person, nil
 }
 
-func (personRepository *PersonRepository) UpdatePerson(ctx context.Context, person domain.Person) error {
-	args := pgx.NamedArgs{
-		"id":          person.ID(),
-		"name":        person.Name(),
-		"surname":     person.Surname(),
-		"patronymic":  person.Patronymic(),
-		"age":         person.Age(),
-		"gender":      person.Gender(),
-		"nationality": person.Nationality(),
-	}
-
-	_, err := personRepository.pool.Exec(ctx, `
-		UPDATE EM.person 
-		SET 
-			name = @name,
-			surname = @surname,
-			patronymic = @patronymic,
-			age = @age,
-			gender = @gender,
-			nationality = @nationality
-		WHERE 
-			person_id = @id
-	`, args)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (personRepository *PersonRepository) Update(ctx context.Context, id uuid.UUID, name string, surname string, patronymic string, age int, gender string, nationality string) error {
 	person, err := personRepository.FindByID(ctx, id)
 	if err != nil {
@@ -107,7 +76,29 @@ func (personRepository *PersonRepository) Update(ctx context.Context, id uuid.UU
 	case nationality != "":
 		person.SetNationality(nationality)
 	}
-	err = personRepository.UpdatePerson(ctx, *person)
+	args := pgx.NamedArgs{
+		"id":          person.ID(),
+		"name":        person.Name(),
+		"surname":     person.Surname(),
+		"patronymic":  person.Patronymic(),
+		"age":         person.Age(),
+		"gender":      person.Gender(),
+		"nationality": person.Nationality(),
+	}
+
+	_, err = personRepository.pool.Exec(ctx, `
+		UPDATE EM.person 
+		SET 
+			name = @name,
+			surname = @surname,
+			patronymic = @patronymic,
+			age = @age,
+			gender = @gender,
+			nationality = @nationality
+		WHERE 
+			person_id = @id
+	`, args)
+
 	if err != nil {
 		return err
 	}
