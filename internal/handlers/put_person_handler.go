@@ -49,6 +49,7 @@ func (handler *PutPersonHandler) ServeHTTP(writer http.ResponseWriter, request *
 		return
 	}
 	command := &usecase.PutPersonCommand{
+		ID:          id,
 		Name:        body.Name,
 		Surname:     body.Surname,
 		Patronymic:  body.Patronymic,

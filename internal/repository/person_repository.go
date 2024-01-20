@@ -49,7 +49,7 @@ func (personRepository *PersonRepository) FindByID(ctx context.Context, id uuid.
 		gender      string
 		nationality string
 	)
-	err := personRepository.pool.QueryRow(ctx, "SELECT * FROM EM.person WHERE person_id=($1)", id).Scan(&id, &name, &surname, &patronymic, &age, &gender, &nationality)
+	err := personRepository.pool.QueryRow(ctx, "SELECT * FROM EM.person WHERE person_id=$1", id).Scan(&id, &name, &surname, &patronymic, &age, &gender, &nationality)
 	if err != nil {
 		return nil, err
 	}
@@ -67,17 +67,31 @@ func (personRepository *PersonRepository) UpdatePerson(ctx context.Context, pers
 		"gender":      person.Gender(),
 		"nationality": person.Nationality(),
 	}
-	_, err := personRepository.pool.Exec(ctx, "UPDATE EM.person SET name = @name, surname = @surname, patronymic = @patronymic, age = @age, gender = @gender, nationality = @nationality  WHERE person_id=@id  VALUES(@id, @name, @surname, @patronymic, @age, @gender, @nationality)", args)
+
+	_, err := personRepository.pool.Exec(ctx, `
+		UPDATE EM.person 
+		SET 
+			name = @name,
+			surname = @surname,
+			patronymic = @patronymic,
+			age = @age,
+			gender = @gender,
+			nationality = @nationality
+		WHERE 
+			person_id = @id
+	`, args)
+
 	if err != nil {
 		return err
 	}
-	return err
+
+	return nil
 }
 
-func (personRepository *PersonRepository) Update(ctx context.Context, id uuid.UUID, name string, surname string, patronymic string, age int, gender string, nationality string) (uuid.UUID, error) {
+func (personRepository *PersonRepository) Update(ctx context.Context, id uuid.UUID, name string, surname string, patronymic string, age int, gender string, nationality string) error {
 	person, err := personRepository.FindByID(ctx, id)
 	if err != nil {
-		return uuid.Nil, err
+		return err
 	}
 	switch {
 	case name != "":
@@ -95,7 +109,7 @@ func (personRepository *PersonRepository) Update(ctx context.Context, id uuid.UU
 	}
 	err = personRepository.UpdatePerson(ctx, *person)
 	if err != nil {
-		return uuid.Nil, err
+		return err
 	}
-	return person.ID(), nil
+	return nil
 }
