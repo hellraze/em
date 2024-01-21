@@ -4,6 +4,7 @@ import (
 	"EM/internal/domain"
 	"EM/internal/usecase"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 )
@@ -22,13 +23,6 @@ func NewGETPeopleResponse(people []domain.Person) *GETPeopleResponse {
 	}
 }
 
-func (g *GETPeopleResponse) MarshalJSON() ([]byte, error) {
-	return json.Marshal(struct {
-		People []domain.Person `json:"people"`
-	}{
-		People: g.People,
-	})
-}
 func NewGETPeopleHandler(useCase *usecase.ReadPersonUseCase) *GETPeopleHandler {
 	return &GETPeopleHandler{
 		useCase: useCase,
@@ -64,7 +58,7 @@ func (handler *GETPeopleHandler) ServeHTTP(writer http.ResponseWriter, request *
 	}
 
 	response := NewGETPeopleResponse(peopleList)
-
+	fmt.Println(response, peopleList)
 	err = json.NewEncoder(writer).Encode(response)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusBadRequest)

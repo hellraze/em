@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/gofrs/uuid"
 )
 
@@ -41,6 +42,25 @@ func NewPerson(id uuid.UUID, name string, surname string, patronymic string, age
 		gender:      gender,
 		nationality: nationality,
 	}, nil
+}
+
+func (p *Person) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		id          uuid.UUID `json:"id"`
+		name        string    `json:"name"`
+		surname     string    `json:"surname"`
+		patronymic  string    `json:"patronymic"`
+		age         int       `json:"age"`
+		gender      string    `json:"gender"`
+		nationality string    `json:"nationality"`
+	}{
+		name:        p.Name(),
+		surname:     p.Surname(),
+		patronymic:  p.Patronymic(),
+		age:         p.Age(),
+		gender:      p.Gender(),
+		nationality: p.Nationality(),
+	})
 }
 
 type PersonRepository interface {
