@@ -8,7 +8,7 @@ Content-Type: application/json
 }
 
 ###
-DELETE localhost:8080/api/people?id=018d286b-dd12-7ba1-aec2-558f25102acf
+DELETE localhost:8080/api/people?id=018d2b4b-d410-72b5-a172-c79e63c969a0
 
 ###
 

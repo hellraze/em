@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 )
 
 const NationalizeURL = "https://api.nationalize.io/"
@@ -22,7 +23,17 @@ type NationalizeResponse struct {
 
 func EnrichDataWithNationality(name string) (string, error) {
 	url := fmt.Sprintf(NationalizeURL + "?name=" + name)
-	response, err := http.Get(url)
+
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return "", err
+	}
+
+	response, err := client.Do(req)
 	if err != nil {
 		return "", err
 	}
@@ -30,15 +41,15 @@ func EnrichDataWithNationality(name string) (string, error) {
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 
 	var nationalizeResponse NationalizeResponse
-
 	err = json.Unmarshal(body, &nationalizeResponse)
 	if err != nil {
 		fmt.Println("Ошибка при распаковке JSON:", err)
 		return "", err
 	}
+
 	return nationalizeResponse.Nationality[0].CountryID, nil
 }
