@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"EM/internal/pkg/logging"
 	"EM/internal/usecase"
 	"encoding/json"
 	"github.com/gofrs/uuid"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -28,6 +30,9 @@ func NewPOSTPersonHandler(useCase *usecase.CreatePersonUseCase) *POSTPersonHandl
 }
 
 func (handler *POSTPersonHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+	log := logging.NewLog()
+	log.Init()
+
 	var body POSTPersonRequest
 	ctx := request.Context()
 	err := json.NewDecoder(request.Body).Decode(&body)
@@ -35,6 +40,7 @@ func (handler *POSTPersonHandler) ServeHTTP(writer http.ResponseWriter, request 
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
+
 	command := &usecase.CreatePersonCommand{
 		Name:       body.Name,
 		Surname:    body.Surname,
@@ -46,6 +52,12 @@ func (handler *POSTPersonHandler) ServeHTTP(writer http.ResponseWriter, request 
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	log.Log.WithFields(logrus.Fields{
+		"id":   person.ID(),
+		"name": person.Name(),
+	}).Info("Получен запрос на добавление пользователя")
+
 	response := &POSTPersonResponse{
 		ID: person.ID(),
 	}

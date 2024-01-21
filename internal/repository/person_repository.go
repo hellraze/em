@@ -2,11 +2,13 @@ package repository
 
 import (
 	"EM/internal/domain"
+	"EM/internal/pkg/logging"
 	"context"
 	"github.com/Masterminds/squirrel"
 	"github.com/gofrs/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/sirupsen/logrus"
 )
 
 type PersonRepository struct {
@@ -34,6 +36,9 @@ func NewModel() *Model {
 }
 
 func (personRepository *PersonRepository) Save(ctx context.Context, person domain.Person) error {
+	log := logging.NewLog()
+	log.Init()
+
 	args := pgx.NamedArgs{
 		"id":          person.ID(),
 		"name":        person.Name(),
@@ -43,17 +48,32 @@ func (personRepository *PersonRepository) Save(ctx context.Context, person domai
 		"gender":      person.Gender(),
 		"nationality": person.Nationality(),
 	}
+
 	_, err := personRepository.pool.Exec(ctx, `
 	INSERT INTO EM.person(person_id, name, surname, patronymic, age, gender, nationality) 
 	VALUES(@id, @name, @surname, @patronymic, @age, @gender, @nationality)`, args)
+
+	log.Log.WithFields(logrus.Fields{
+		"id":   person.ID(),
+		"name": person.Name(),
+	}).Info("Новый пользователь добавлен")
+
 	return err
 }
 
 func (personRepository *PersonRepository) Delete(ctx context.Context, id uuid.UUID) error {
+	log := logging.NewLog()
+	log.Init()
+
 	_, err := personRepository.pool.Exec(ctx, "DELETE FROM EM.person WHERE person_id=$1", id) //логи
 	if err != nil {
 		return err
 	}
+
+	log.Log.WithFields(logrus.Fields{
+		"id": id,
+	}).Info("Пользователь с данным id удален")
+
 	return nil
 }
 
@@ -75,6 +95,9 @@ func (personRepository *PersonRepository) FindByID(ctx context.Context, id uuid.
 }
 
 func (personRepository *PersonRepository) Update(ctx context.Context, id uuid.UUID, name string, surname string, patronymic string, age int, gender string, nationality string) error {
+	log := logging.NewLog()
+	log.Init()
+
 	person, err := personRepository.FindByID(ctx, id)
 	if err != nil {
 		return err
@@ -120,6 +143,10 @@ func (personRepository *PersonRepository) Update(ctx context.Context, id uuid.UU
 			person_id = @id
 	`, args)
 
+	log.Log.WithFields(logrus.Fields{
+		"id": id,
+	}).Info("Пользователь с данным id изменен")
+
 	if err != nil {
 		return err
 	}
@@ -127,6 +154,9 @@ func (personRepository *PersonRepository) Update(ctx context.Context, id uuid.UU
 }
 
 func (personRepository *PersonRepository) Read(ctx context.Context, nameFilter string, nationalityFilter string, offset int, limit int) ([]domain.Person, error) {
+	log := logging.NewLog()
+	log.Init()
+
 	limitUint64 := uint64(limit)
 	offsetUint64 := uint64(offset)
 
@@ -171,6 +201,10 @@ func (personRepository *PersonRepository) Read(ctx context.Context, nameFilter s
 		}
 		people = append(people, *person)
 
+		log.Log.WithFields(logrus.Fields{
+			"id": person.ID(),
+		}).Info("Пользователь с данным id найден")
 	}
+
 	return people, nil
 }

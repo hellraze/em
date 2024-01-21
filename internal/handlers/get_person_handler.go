@@ -2,8 +2,10 @@ package handlers
 
 import (
 	"EM/internal/domain"
+	"EM/internal/pkg/logging"
 	"EM/internal/usecase"
 	"encoding/json"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
 )
@@ -31,6 +33,9 @@ func NewGETPeopleHandler(useCase *usecase.ReadPersonUseCase) *GETPeopleHandler {
 }
 
 func (handler *GETPeopleHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+	log := logging.NewLog()
+	log.Init()
+
 	name := request.URL.Query().Get("name")
 	nationality := request.URL.Query().Get("nationality")
 
@@ -45,6 +50,11 @@ func (handler *GETPeopleHandler) ServeHTTP(writer http.ResponseWriter, request *
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	log.Log.WithFields(logrus.Fields{
+		"name":        name,
+		"nationality": nationality,
+	}).Info("Получен запрос на поиск пользователей с данным фильтрами")
 
 	readCommand := &usecase.ReadPersonCommand{
 		Name:        name,

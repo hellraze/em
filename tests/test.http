@@ -3,12 +3,12 @@ Content-Type: application/json
 
 {
   "name": "Aidar",
-  "surname": "Yarullin",
+  "surname": "Neyarullin",
   "patronymic": "Lenarovich"
 }
 
 ###
-DELETE localhost:8080/api/people?id=018d2b4b-d410-72b5-a172-c79e63c969a0
+DELETE localhost:8080/api/people?id=018d2d2d-5cc0-71d6-bc5c-0fb709b69f36
 
 ###
 

@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"EM/internal/pkg/logging"
 	"EM/internal/usecase"
 	"encoding/json"
 	"github.com/gofrs/uuid"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -31,6 +33,9 @@ func NewPutPersonHandler(useCase *usecase.PutPersonUseCase) *PutPersonHandler {
 }
 
 func (handler *PutPersonHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+	log := logging.NewLog()
+	log.Init()
+
 	id, err := uuid.FromString(request.URL.Query().Get("id"))
 	if err != nil {
 		http.Error(writer, "ID parameter is required", http.StatusBadRequest)
@@ -63,6 +68,11 @@ func (handler *PutPersonHandler) ServeHTTP(writer http.ResponseWriter, request *
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	log.Log.WithFields(logrus.Fields{
+		"id": person.ID(),
+	}).Info("Получен запрос на изменение пользователя с данным id")
+
 	response := &POSTPersonResponse{
 		ID: person.ID(),
 	}
