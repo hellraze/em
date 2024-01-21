@@ -48,4 +48,5 @@ type PersonRepository interface {
 	Delete(context.Context, uuid.UUID) error
 	FindByID(context.Context, uuid.UUID) (*Person, error)
 	Update(context.Context, uuid.UUID, string, string, string, int, string, string) error
+	Read(context.Context, string, string, int, int) ([]Person, error)
 }

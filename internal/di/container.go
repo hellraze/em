@@ -30,6 +30,9 @@ type Container struct {
 
 	putPerson        *usecase.PutPersonUseCase
 	putPersonHandler *handlers.PutPersonHandler
+
+	readPerson       *usecase.ReadPersonUseCase
+	getPersonHandler *handlers.GETPeopleHandler
 }
 
 func NewContainer(ctx context.Context) *Container {
@@ -84,6 +87,20 @@ func (c *Container) PutPersonHandler() *handlers.PutPersonHandler {
 	return c.putPersonHandler
 }
 
+func (c *Container) ReadPerson() *usecase.ReadPersonUseCase {
+	if c.readPerson == nil {
+		c.readPerson = usecase.NewReadPersonUseCase(c.PersonRepository())
+	}
+	return c.readPerson
+}
+
+func (c *Container) GETPersonHandler() *handlers.GETPeopleHandler {
+	if c.getPersonHandler == nil {
+		c.getPersonHandler = handlers.NewGETPeopleHandler(c.ReadPerson())
+	}
+	return c.getPersonHandler
+}
+
 func (c *Container) PersonRepository() domain.PersonRepository {
 	if c.personRepository == nil {
 		c.personRepository = repository.NewPersonRepository(c.pool)
@@ -101,6 +118,7 @@ func (c *Container) HTTPRouter() http.Handler {
 	router.Handle("/api/people", c.POSTPersonHandler()).Methods(http.MethodPost)
 	router.Handle("/api/people", c.DeletePersonHandler()).Methods(http.MethodDelete)
 	router.Handle("/api/people", c.PutPersonHandler()).Methods(http.MethodPut)
+	router.Handle("/api/people", c.GETPersonHandler()).Methods(http.MethodGet)
 	c.router = router
 	return c.router
 

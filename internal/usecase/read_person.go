@@ -3,7 +3,6 @@ package usecase
 import (
 	"EM/internal/domain"
 	"context"
-	"github.com/gofrs/uuid"
 )
 
 type ReadPersonUseCase struct {
@@ -17,17 +16,13 @@ func NewReadPersonUseCase(personRepository domain.PersonRepository) *ReadPersonU
 }
 
 type ReadPersonCommand struct {
-	ID          uuid.UUID
 	Name        string
-	Surname     string
-	Patronymic  string
-	Age         int
-	Gender      string
 	Nationality string
+	Offset      int
+	Limit       int
 }
 
-func (useCase *ReadPersonUseCase) ReadUserHandler(ctx context.Context, command *ReadPersonCommand) (*domain.Person, error) {
-	person, err := domain.NewPerson(command.ID, command.Name, command.Surname, command.Patronymic, command.Age, command.Gender, command.Nationality)
-	err = useCase.personRepository.Update(ctx, command.ID, command.Name, command.Surname, command.Patronymic, command.Age, command.Gender, command.Nationality)
-	return person, err
+func (useCase *ReadPersonUseCase) ReadPersonHandler(ctx context.Context, command *ReadPersonCommand) ([]domain.Person, error) {
+	people, err := useCase.personRepository.Read(ctx, command.Name, command.Nationality, command.Offset, command.Limit)
+	return people, err
 }

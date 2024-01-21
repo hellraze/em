@@ -3,6 +3,7 @@ package repository
 import (
 	"EM/internal/domain"
 	"context"
+	"github.com/Masterminds/squirrel"
 	"github.com/gofrs/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -18,6 +19,20 @@ func NewPersonRepository(pool *pgxpool.Pool) *PersonRepository {
 	}
 }
 
+type Model struct {
+	PersonID    uuid.UUID
+	Name        string
+	Surname     string
+	Patronymic  string
+	Age         int
+	Gender      string
+	Nationality string
+}
+
+func NewModel() *Model {
+	return &Model{}
+}
+
 func (personRepository *PersonRepository) Save(ctx context.Context, person domain.Person) error {
 	args := pgx.NamedArgs{
 		"id":          person.ID(),
@@ -28,7 +43,9 @@ func (personRepository *PersonRepository) Save(ctx context.Context, person domai
 		"gender":      person.Gender(),
 		"nationality": person.Nationality(),
 	}
-	_, err := personRepository.pool.Exec(ctx, "INSERT INTO EM.person(person_id, name, surname, patronymic, age, gender, nationality) VALUES(@id, @name, @surname, @patronymic, @age, @gender, @nationality)", args)
+	_, err := personRepository.pool.Exec(ctx, `
+	INSERT INTO EM.person(person_id, name, surname, patronymic, age, gender, nationality) 
+	VALUES(@id, @name, @surname, @patronymic, @age, @gender, @nationality)`, args)
 	return err
 }
 
@@ -107,4 +124,53 @@ func (personRepository *PersonRepository) Update(ctx context.Context, id uuid.UU
 		return err
 	}
 	return nil
+}
+
+func (personRepository *PersonRepository) Read(ctx context.Context, nameFilter string, nationalityFilter string, offset int, limit int) ([]domain.Person, error) {
+	limitUint64 := uint64(limit)
+	offsetUint64 := uint64(offset)
+
+	var psql = squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
+
+	query := psql.Select("*").From("EM.person")
+	if nameFilter != "" {
+		query = query.Where(squirrel.Eq{"name": nameFilter})
+	}
+	if nationalityFilter != "" {
+		query = query.Where(squirrel.Eq{"nationality": nationalityFilter})
+	}
+	query = query.Offset(limitUint64)
+	query = query.Limit(offsetUint64)
+	sql, _, err := query.ToSql()
+	if err != nil {
+		return nil, err
+	}
+	rows, err := personRepository.pool.Query(ctx, sql, nameFilter, nationalityFilter)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var people []domain.Person
+
+	for rows.Next() {
+		model := NewModel()
+
+		err = rows.Scan(
+			&model.PersonID,
+			&model.Name,
+			&model.Surname,
+			&model.Patronymic,
+			&model.Age,
+			&model.Gender,
+			&model.Nationality,
+		)
+		person, err := domain.NewPerson(model.PersonID, model.Name, model.Surname, model.Patronymic, model.Age, model.Gender, model.Nationality)
+		if err != nil {
+			return nil, err
+		}
+		people = append(people, *person)
+
+	}
+	return people, nil
 }

@@ -31,3 +31,6 @@ Content-Type: application/json
   "surname": "Askerov",
   "patronymic": "Vladimirovich"
 }
+
+###
+GET localhost:8080/api/people?name=Aidar&nationality=KZ&limit=10&offset=1
