@@ -12,14 +12,13 @@ DELETE localhost:8080/api/people?id=018d2b4b-d410-72b5-a172-c79e63c969a0
 
 ###
 
-PUT localhost:8080/api/people?id=018d1e1c-8cbb-70f6-b01e-699687167962
+PUT localhost:8080/api/people?id=018d2cb4-4ad8-704d-8435-1a1ffb50a697
 Content-Type: application/json
 
 {
   "name": "Aidar",
-  "surname": "Yarullin",
-  "patronymic": "Lenarovich",
-  "age": 29
+  "surname": "Askerov",
+  "patronymic": "Vladimirovich"
 }
 
 ###

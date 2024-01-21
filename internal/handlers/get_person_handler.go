@@ -4,7 +4,6 @@ import (
 	"EM/internal/domain"
 	"EM/internal/usecase"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 )
@@ -14,12 +13,14 @@ type GETPeopleHandler struct {
 }
 
 type GETPeopleResponse struct { //добавить сериалайзер
-	People []domain.Person `json:"people"`
+	Name    string `json:"name"`
+	Surname string `json:"surname"`
 }
 
-func NewGETPeopleResponse(people []domain.Person) *GETPeopleResponse {
+func NewGETPeopleResponse(person domain.Person) *GETPeopleResponse {
 	return &GETPeopleResponse{
-		People: people,
+		Name:    person.Name(),
+		Surname: person.Surname(),
 	}
 }
 
@@ -57,9 +58,13 @@ func (handler *GETPeopleHandler) ServeHTTP(writer http.ResponseWriter, request *
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 	}
 
-	response := NewGETPeopleResponse(peopleList)
-	fmt.Println(response, peopleList)
-	err = json.NewEncoder(writer).Encode(response)
+	var responses []GETPeopleResponse
+
+	for _, person := range peopleList {
+		response := NewGETPeopleResponse(person)
+		responses = append(responses, *response)
+	}
+	err = json.NewEncoder(writer).Encode(responses)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
