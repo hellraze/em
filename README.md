@@ -13,5 +13,5 @@
 * https://github.com/Masterminds/squirrel - билдер запросов к БД
 * https://github.com/sirupsen/logrus - используется для логгирования
 ## Стек
-* Goland
+* Golang
 * Postgres
