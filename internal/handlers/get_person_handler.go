@@ -16,6 +16,12 @@ type GETPeopleResponse struct { //добавить сериалайзер
 	People []domain.Person `json:"people"`
 }
 
+func NewGETPeopleResponse(people []domain.Person) *GETPeopleResponse {
+	return &GETPeopleResponse{
+		People: people,
+	}
+}
+
 func (g *GETPeopleResponse) MarshalJSON() ([]byte, error) {
 	return json.Marshal(struct {
 		People []domain.Person `json:"people"`
@@ -23,7 +29,6 @@ func (g *GETPeopleResponse) MarshalJSON() ([]byte, error) {
 		People: g.People,
 	})
 }
-
 func NewGETPeopleHandler(useCase *usecase.ReadPersonUseCase) *GETPeopleHandler {
 	return &GETPeopleHandler{
 		useCase: useCase,
@@ -58,9 +63,8 @@ func (handler *GETPeopleHandler) ServeHTTP(writer http.ResponseWriter, request *
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 	}
 
-	response := &GETPeopleResponse{
-		People: peopleList,
-	}
+	response := NewGETPeopleResponse(peopleList)
+
 	err = json.NewEncoder(writer).Encode(response)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusBadRequest)
