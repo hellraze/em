@@ -139,8 +139,8 @@ func (personRepository *PersonRepository) Read(ctx context.Context, nameFilter s
 	if nationalityFilter != "" {
 		query = query.Where(squirrel.Eq{"nationality": nationalityFilter})
 	}
-	query = query.Offset(limitUint64)
-	query = query.Limit(offsetUint64)
+	query = query.Offset(offsetUint64)
+	query = query.Limit(limitUint64)
 	sql, _, err := query.ToSql()
 	if err != nil {
 		return nil, err

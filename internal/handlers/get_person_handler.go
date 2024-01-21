@@ -13,7 +13,15 @@ type GETPeopleHandler struct {
 }
 
 type GETPeopleResponse struct { //добавить сериалайзер
-	People []domain.Person
+	People []domain.Person `json:"people"`
+}
+
+func (g *GETPeopleResponse) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		People []domain.Person `json:"people"`
+	}{
+		People: g.People,
+	})
 }
 
 func NewGETPeopleHandler(useCase *usecase.ReadPersonUseCase) *GETPeopleHandler {

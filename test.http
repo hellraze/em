@@ -33,4 +33,4 @@ Content-Type: application/json
 }
 
 ###
-GET localhost:8080/api/people?name=Aidar&nationality=KZ&limit=10&offset=1
+GET localhost:8080/api/people?name=Aidar&nationality=KZ&limit=10&offset=0
