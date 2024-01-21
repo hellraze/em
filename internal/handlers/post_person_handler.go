@@ -47,16 +47,16 @@ func (handler *POSTPersonHandler) ServeHTTP(writer http.ResponseWriter, request 
 		Patronymic: body.Patronymic,
 	}
 
+	log.Log.WithFields(logrus.Fields{
+		"name":    body.Name,
+		"surname": body.Surname,
+	}).Info("Получен запрос на добавление пользователя")
+
 	person, err := handler.useCase.CreateUserHandler(ctx, command)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	log.Log.WithFields(logrus.Fields{
-		"id":   person.ID(),
-		"name": person.Name(),
-	}).Info("Получен запрос на добавление пользователя")
 
 	response := &POSTPersonResponse{
 		ID: person.ID(),

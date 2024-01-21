@@ -63,15 +63,15 @@ func (handler *PutPersonHandler) ServeHTTP(writer http.ResponseWriter, request *
 		Nationality: body.Nationality,
 	}
 
+	log.Log.WithFields(logrus.Fields{
+		"id": command.ID,
+	}).Info("Получен запрос на изменение пользователя с данным id")
+
 	person, err := handler.useCase.PutUserHandler(ctx, command)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	log.Log.WithFields(logrus.Fields{
-		"id": person.ID(),
-	}).Info("Получен запрос на изменение пользователя с данным id")
 
 	response := &POSTPersonResponse{
 		ID: person.ID(),

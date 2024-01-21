@@ -8,17 +8,18 @@ Content-Type: application/json
 }
 
 ###
-DELETE localhost:8080/api/people?id=018d2d2d-5cc0-71d6-bc5c-0fb709b69f36
+DELETE localhost:8080/api/people?id=018d2de0-5b58-7de5-b829-20592d8c5a86
 
 ###
 
-PUT localhost:8080/api/people?id=018d2cb4-4ad8-704d-8435-1a1ffb50a697
+PUT localhost:8080/api/people?id=018d2de0-5b58-7de5-b829-20592d8c5a86
 Content-Type: application/json
 
 {
   "name": "Aidar",
   "surname": "Askerov",
-  "patronymic": "Vladimirovich"
+  "patronymic": "Vladimirovich",
+  "age": 29
 }
 
 ###
