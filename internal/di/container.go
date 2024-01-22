@@ -4,13 +4,14 @@ import (
 	"EM/internal/domain"
 	"EM/internal/handlers"
 	"EM/internal/handlers/middleware"
+	"EM/internal/pkg/logging"
 	"EM/internal/repository"
 	"EM/internal/usecase"
 	"context"
-	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 
@@ -36,9 +37,14 @@ type Container struct {
 }
 
 func NewContainer(ctx context.Context) *Container {
+	log := logging.NewLog()
+	log.Init()
+
 	pool, err := CreateConnection(ctx)
 	if err != nil {
-		fmt.Println("error: %w", err)
+		log.Log.WithFields(logrus.Fields{
+			"container.go": "NewContainer() 46",
+		}).Errorf("Ошибка %w", err)
 	}
 	return &Container{
 		pool: pool,
@@ -125,9 +131,14 @@ func (c *Container) HTTPRouter() http.Handler {
 }
 
 func CreateConnection(ctx context.Context) (*pgxpool.Pool, error) {
+	log := logging.NewLog()
+	log.Init()
+
 	err := godotenv.Load(".env")
 	if err != nil {
-		fmt.Println(".env file not found")
+		log.Log.WithFields(logrus.Fields{
+			"container.go": "CreateConnection() 136",
+		}).Errorf("Ошибка %w", err)
 	}
 	dns := os.Getenv("DATABASE")
 	pool, err := pgxpool.New(ctx, dns)

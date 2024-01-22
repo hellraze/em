@@ -54,9 +54,9 @@ func (personRepository *PersonRepository) Save(ctx context.Context, person domai
 	VALUES(@id, @name, @surname, @patronymic, @age, @gender, @nationality)`, args)
 
 	log.Log.WithFields(logrus.Fields{
-		"id":   person.ID(),
-		"name": person.Name(),
-	}).Info("Новый пользователь добавлен")
+		"name":    person.Name(),
+		"surname": person.Surname(),
+	}).Debug("Новый пользователь добавлен: ", person.ID())
 
 	return err
 }
@@ -72,12 +72,15 @@ func (personRepository *PersonRepository) Delete(ctx context.Context, id uuid.UU
 
 	log.Log.WithFields(logrus.Fields{
 		"id": id,
-	}).Info("Пользователь с данным id удален")
+	}).Debug("Пользователь с данным id удален")
 
 	return nil
 }
 
 func (personRepository *PersonRepository) FindByID(ctx context.Context, id uuid.UUID) (*domain.Person, error) {
+	log := logging.NewLog()
+	log.Init()
+
 	var (
 		name        string
 		surname     string
@@ -91,6 +94,11 @@ func (personRepository *PersonRepository) FindByID(ctx context.Context, id uuid.
 		return nil, err
 	}
 	person, err := domain.NewPerson(id, name, surname, patronymic, age, gender, nationality)
+
+	log.Log.WithFields(logrus.Fields{
+		"Name": person.Name(),
+	}).Debug("Пользователь с данным id найден: ", person.ID())
+
 	return person, nil
 }
 
@@ -144,8 +152,8 @@ func (personRepository *PersonRepository) Update(ctx context.Context, id uuid.UU
 	`, args)
 
 	log.Log.WithFields(logrus.Fields{
-		"id": id,
-	}).Info("Пользователь с данным id изменен")
+		"Name": name,
+	}).Debug("Пользователь с данным id изменен. Новый id: ", person.ID())
 
 	if err != nil {
 		return err
@@ -202,8 +210,8 @@ func (personRepository *PersonRepository) Read(ctx context.Context, nameFilter s
 		people = append(people, *person)
 
 		log.Log.WithFields(logrus.Fields{
-			"id": person.ID(),
-		}).Info("Пользователь с данным id найден")
+			"name": person.Name(),
+		}).Debug("Пользователь с данным id найден: ", person.ID())
 	}
 
 	return people, nil

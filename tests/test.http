@@ -3,23 +3,24 @@ Content-Type: application/json
 
 {
   "name": "Aidar",
-  "surname": "Neyarullin",
+  "surname": "Yarullin",
   "patronymic": "Lenarovich"
 }
 
 ###
-DELETE localhost:8080/api/people?id=018d2de0-5b58-7de5-b829-20592d8c5a86
+DELETE localhost:8080/api/people?id=018d3028-1aa5-7904-aebf-a223c64b4316
 
 ###
 
-PUT localhost:8080/api/people?id=018d2de0-5b58-7de5-b829-20592d8c5a86
+PUT localhost:8080/api/people?id=018d3028-1aa5-7904-aebf-a223c64b4316
 Content-Type: application/json
 
 {
   "name": "Aidar",
   "surname": "Askerov",
   "patronymic": "Vladimirovich",
-  "age": 29
+  "age": 29,
+  "nationality": "KZ"
 }
 
 ###
